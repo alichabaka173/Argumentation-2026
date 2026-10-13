@@ -26,7 +26,7 @@ class ABAError(ValueError):
 # --------------------------------------------------------------------------- #
 # Structures de données
 # --------------------------------------------------------------------------- #
-@dataclass()
+@dataclass(fronzen=True)
 class Rule:
     id: str
     head: str
