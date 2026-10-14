@@ -309,7 +309,7 @@ def generate(text):
         out.append("\n== Attaques ==")
         out += fmt(plain)
     else:
-        out.append("\n== Attaques sans préférences ==")
+        out.append("\n== Attaque sans préférence ==")
         out += fmt(plain)
         out.append("\n== Attaques normales ==")
         out += fmt(normal)
