@@ -306,16 +306,16 @@ def generate(text):
         return [f"{x.name} -> {y.name}   (sur {h})" for x, y, h in lst] or ["(aucune)"]
 
     if not has_pref:
-        out.append("\n== Attaques ==")
+        out.append("\ les  Attaques ")
         out += fmt(plain)
     else:
-        out.append("\n== Attaque sans préférence ==")
+        out.append("\n les Attaques sans préférence ")
         out += fmt(plain)
         out.append("\n== Attaque normale ==")
         out += fmt(normal)
-        out.append("\n== Attaques inverses (reverse) ==")
+        out.append("\ Attaques inverses ")
         out += fmt(reverse)
-        out.append("\n== Attaques finales (normales + inverses) ==")
+        out.append("\n les  Attaques finales (normales + inverses) ")
         out += fmt(normal + reverse)
 
     return "\n".join(out), {
