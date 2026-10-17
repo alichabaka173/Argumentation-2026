@@ -313,7 +313,7 @@ def generate(text):
         out += fmt(plain)
         out.append("\nles Attaque normales")
         out += fmt(normal)
-        out.append("\ Attaques inverses ")
+        out.append(" les Attaques inverses ")
         out += fmt(reverse)
         out.append("\n les  Attaques finales (normales + inverses) ")
         out += fmt(normal + reverse)
