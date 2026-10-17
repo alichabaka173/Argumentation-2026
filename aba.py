@@ -23,9 +23,8 @@ class ABAError(ValueError):
     pass
 
 
-# --------------------------------------------------------------------------- #
+
 # Structures de données
-# --------------------------------------------------------------------------- #
 @dataclass
 class Rule:
     id: str
@@ -299,23 +298,23 @@ def generate(text):
     if not atomic.rules:
         out.append("(aucune règle)")
 
-    out.append("\n Les Arguments ")
+    out.append("\nLes Arguments ")
     out += [str(a) for a in args]
 
     def fmt(lst):
         return [f"{x.name} -> {y.name}   (sur {h})" for x, y, h in lst] or ["(aucune)"]
 
     if not has_pref:
-        out.append(" les  Attaques ")
+        out.append("\nles  Attaques ")
         out += fmt(plain)
     else:
-        out.append("\n les Attaques sans préférence ")
+        out.append("\nles Attaques sans préférence ")
         out += fmt(plain)
-        out.append("\n les Attaque normales")
+        out.append("\nles Attaque normales")
         out += fmt(normal)
-        out.append("\n les Attaques inverses ")
+        out.append("\nles Attaques inverses ")
         out += fmt(reverse)
-        out.append("\n les  Attaques finales (normales + inverses) ")
+        out.append("\nles  Attaques finales (normales + inverses) ")
         out += fmt(normal + reverse)
 
     return "\n".join(out), {
