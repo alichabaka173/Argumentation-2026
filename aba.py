@@ -314,8 +314,6 @@ def generate(text):
         out += fmt(normal)
         out.append("\nles Attaques inverses ")
         out += fmt(reverse)
-        out.append("\nles  Attaques finales (normales + inverses) ")
-        out += fmt(normal + reverse)
 
     return "\n".join(out), {
         "framework": fw, "atomic": atomic, "arguments": args,
