@@ -284,7 +284,7 @@ def generate(text):
     has_pref = bool(fw.strict_pref)
 
     out = []
-    out.append("== Cadre ABA d'origine ==")
+    out.append("Cadre ABA d'origine ")
     out.append(f"Littéraux  : {', '.join(fw.literals)}")
     out.append(f"Hypothèses : {', '.join(fw.assumptions)}")
     out += [f"C({a}) = {fw.contrary[a]}" for a in fw.assumptions]
@@ -293,13 +293,13 @@ def generate(text):
         out.append("Préférences (x > y) : " +
                    ", ".join(f"{x}>{y}" for x, y in sorted(fw.strict_pref)))
 
-    out.append("\n== Cadre non circulaire et atomique ==")
+    out.append("\nCadre non circulaire et atomique ")
     for r in atomic.rules:
         out.append(f"{r}    (de {' | '.join(r.origins)})")
     if not atomic.rules:
         out.append("(aucune règle)")
 
-    out.append("\n== Arguments ==")
+    out.append("\n Les Arguments ")
     out += [str(a) for a in args]
 
     def fmt(lst):
@@ -311,7 +311,7 @@ def generate(text):
     else:
         out.append("\n les Attaques sans préférence ")
         out += fmt(plain)
-        out.append("\n== Attaque normale ==")
+        out.append("\nles Attaque normale s")
         out += fmt(normal)
         out.append("\ Attaques inverses ")
         out += fmt(reverse)
