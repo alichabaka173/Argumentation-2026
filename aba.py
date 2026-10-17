@@ -26,7 +26,7 @@ class ABAError(ValueError):
 # --------------------------------------------------------------------------- #
 # Structures de données
 # --------------------------------------------------------------------------- #
-@dataclass(frozen=True)
+@dataclass
 class Rule:
     id: str
     head: str
@@ -37,11 +37,11 @@ class Rule:
         return f"[{self.id}]: {self.head} <- {','.join(self.body)}"
 
 
-@dataclass(frozen=True)
+@dataclass
 class Argument:
     name: str
     claim: str
-    support: frozenset
+    support: set
     rule: str  # id de la règle (None pour un argument {a} |- a)
 
     def __str__(self):
@@ -49,9 +49,9 @@ class Argument:
         return f"{self.name}: [{sup}] |- {self.claim}"
 
 
-# --------------------------------------------------------------------------- #
+
 # Cadre ABA
-# --------------------------------------------------------------------------- #
+
 class ABA:
     def __init__(self, literals, assumptions, contraries, rules, strict_pref=None):
         self.literals = list(dict.fromkeys(literals))
@@ -62,7 +62,7 @@ class ABA:
         self.strict_pref = set(strict_pref or ())
         self._validate()
 
-    # ------------------------------------------------------------------ #
+   
     def _validate(self):
         lits = set(self.literals)
         for a in self.assumptions:
@@ -88,13 +88,13 @@ class ABA:
                     self.literals.append(s)
                     lits.add(s)
 
-    # ------------------------------------------------------------------ #
+    
     # Préférences
     def prefers(self, x, y):
         """True si x est strictement préférée à y."""
         return (x, y) in self.strict_pref
 
-    # ------------------------------------------------------------------ #
+   
     # Conversion non circulaire + atomique (dépliage)
     def to_atomic(self):
         """
@@ -112,12 +112,12 @@ class ABA:
 
         def derive(s, visiting):
             if s in A:
-                return [(frozenset([s]), s)]
+                return [({s}, s)]
             if s in visiting:
                 return []  # dérivation circulaire
             out = []
             for r in by_head.get(s, []):
-                combos = [(frozenset(), [])]
+                combos = [(set(), [])]
                 for b in r.body:
                     opts = derive(b, visiting | {s})
                     combos = [(S | S2, ts + [t2])
@@ -131,12 +131,14 @@ class ABA:
 
         new_rules, n = [], 0
         for head in dict.fromkeys(r.head for r in self.rules):
+            # clé du dictionnaire : tuple trié des hypothèses (un set n'est
+            # pas hachable, donc il ne peut pas servir de clé)
             merged = {}
-            for S, tree in derive(head, frozenset()):
-                merged.setdefault(S, []).append(tree)
-            for S, trees in merged.items():
+            for S, tree in derive(head, set()):
+                merged.setdefault(tuple(sorted(S)), []).append(tree)
+            for body, trees in merged.items():
                 n += 1
-                new_rules.append(Rule(f"u{n}", head, tuple(sorted(S)), tuple(trees)))
+                new_rules.append(Rule(f"u{n}", head, body, tuple(trees)))
         return ABA(self.literals, self.assumptions, self.contrary,
                    new_rules, self.strict_pref)
 
@@ -152,13 +154,13 @@ class ABA:
         args, i = [], 0
         for a in self.assumptions:
             i += 1
-            args.append(Argument(f"A{i}", a, frozenset([a]), None))
+            args.append(Argument(f"A{i}", a, {a}, None))
         for r in self.rules:
             i += 1
-            args.append(Argument(f"A{i}", r.head, frozenset(r.body), r.id))
+            args.append(Argument(f"A{i}", r.head, set(r.body), r.id))
         return args
 
-    # ------------------------------------------------------------------ #
+   
     # Attaques
     def attacks(self, args):
         """
@@ -195,9 +197,8 @@ class ABA:
         return plain, normal, reverse
 
 
-# --------------------------------------------------------------------------- #
+
 # Parsing
-# --------------------------------------------------------------------------- #
 def _split(s):
     return [t.strip() for t in s.split(",") if t.strip()]
 
@@ -272,9 +273,8 @@ def parse(text):
     return ABA(literals, assumptions, contraries, rules, strict)
 
 
-# --------------------------------------------------------------------------- #
+
 # Rapport
-# --------------------------------------------------------------------------- #
 def generate(text):
     """Pipeline complet ; retourne (rapport texte, dict de résultats)."""
     fw = parse(text)
